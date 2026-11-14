@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Vật liệu Polymer | Lớp học Thầy Cường Lê</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Cấu hình MathJax hỗ trợ Toán & Hóa học (mhchem) -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        packages: {'[+]': ['mhchem']}
+      },
+      loader: {load: ['[tex]/mhchem']}
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* ==================== BIẾN CSS & CƠ BẢN ==================== */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --bg-card: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #06b6d4;
+            --primary-hover: #0891b2;
+            --secondary: #ec4899;
+            --secondary-hover: #db2777;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius: 12px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden; /* Chống cuộn toàn trang, cuộn từng cột */
+            line-height: 1.6;
+        }
+
+        /* ==================== MÀN HÌNH ĐĂNG NHẬP ==================== */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-dark); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .login-box {
+            background: var(--bg-panel); padding: 40px; border-radius: var(--radius);
+            box-shadow: var(--shadow); text-align: center; width: 90%; max-width: 400px;
+        }
+        .login-box i { font-size: 3rem; color: var(--primary); margin-bottom: 15px; }
+        .login-box h1 { font-size: 1.8rem; margin-bottom: 5px; color: var(--primary); }
+        .login-box p { color: var(--text-muted); margin-bottom: 25px; }
+        .login-box input, .login-box select {
+            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px;
+            border: 1px solid var(--bg-card); background: var(--bg-dark);
+            color: var(--text-main); font-size: 1rem;
+        }
+
+        /* ==================== COMPONENT CHUNG ==================== */
+        button {
+            cursor: pointer; border: none; border-radius: 8px; font-weight: bold;
+            transition: all 0.2s; font-family: var(--font-main);
+        }
+        .btn-primary { background: var(--primary); color: #fff; padding: 12px 20px; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--secondary); color: #fff; padding: 10px 15px; }
+        .btn-secondary:hover { background: var(--secondary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 10px 15px; }
+        .btn-outline:hover { background: var(--primary); color: #fff; }
+        .btn-block { width: 100%; padding: 15px; font-size: 1.1rem; }
+        
+        input[type="text"], input[type="number"] {
+            padding: 10px; border-radius: 6px; border: 1px solid var(--bg-card);
+            background: var(--bg-dark); color: var(--text-main);
+        }
+
+        .hidden { display: none !important; }
+
+        /* ==================== BỐ CỤC 3 CỘT (DESKTOP) ==================== */
+        #app-layout {
+            display: grid; grid-template-columns: 280px 1fr 280px;
+            width: 100vw; height: 100vh;
+        }
+
+        /* Cột trái: Menu */
+        .sidebar-left {
+            background: var(--bg-panel); border-right: 1px solid var(--bg-card);
+            display: flex; flex-direction: column; overflow-y: auto;
+        }
+        .menu-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--bg-card); }
+        .menu-list { list-style: none; padding: 10px; }
+        .menu-item {
+            padding: 12px 15px; margin-bottom: 8px; border-radius: 8px;
+            cursor: pointer; transition: 0.2s; color: var(--text-muted);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .menu-item:hover { background: var(--bg-card); color: var(--text-main); }
+        .menu-item.active { background: var(--primary); color: #fff; font-weight: bold; }
+        .menu-sub { margin-left: 20px; font-size: 0.9rem; padding: 10px; }
+
+        /* Cột giữa: Nội dung */
+        .main-content {
+            background: var(--bg-dark); overflow-y: auto; padding: 30px;
+            scroll-behavior: smooth;
+        }
+        .content-card {
+            background: var(--bg-panel); border-radius: var(--radius);
+            padding: 25px; margin-bottom: 20px; box-shadow: var(--shadow);
+        }
+        .section-title { color: var(--primary); border-bottom: 2px solid var(--bg-card); padding-bottom: 10px; margin-bottom: 20px; }
+        .content-img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 15px auto; max-height: 400px; object-fit: contain; }
+        .math-box { overflow-x: auto; padding: 10px 0; }
+
+        /* Cột phải: Thông tin */
+        .sidebar-right {
+            background: var(--bg-panel); border-left: 1px solid var(--bg-card);
+            padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
+        }
+        .info-card { background: var(--bg-card); padding: 15px; border-radius: var(--radius); text-align: center; }
+        .info-card h3 { font-size: 1rem; color: var(--text-muted); margin-bottom: 10px; }
+        .score-display { font-size: 2.5rem; font-weight: bold; color: var(--success); }
+
+        /* Mobile Nav */
+        .mobile-nav { display: none; }
+
+        /* ==================== COMPONENT CÂU HỎI TƯƠNG TÁC ==================== */
+        .question-box { background: var(--bg-dark); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--bg-card); }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .option-btn {
+            background: var(--bg-panel); border: 2px solid var(--bg-card); color: var(--text-main);
+            padding: 12px; border-radius: 8px; text-align: left;
+        }
+        .option-btn:hover:not(:disabled) { border-color: var(--primary); }
+        .option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: var(--success); }
+        .option-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+        
+        .feedback { margin-top: 10px; padding: 10px; border-radius: 8px; display: none; font-size: 0.95rem; }
+        .feedback.show { display: block; }
+        .feedback.success { background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success); }
+        .feedback.error { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--danger); }
+
+        /* Kéo thả (Tap to drop) */
+        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; padding: 15px; background: var(--bg-card); border-radius: 8px; }
+        .word-chip { background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; user-select: none; }
+        .word-chip.selected-chip { box-shadow: 0 0 0 3px var(--warning); transform: scale(1.05); }
+        .drop-blank {
+            display: inline-block; min-width: 100px; height: 32px; border-bottom: 2px dashed var(--primary);
+            margin: 0 5px; vertical-align: middle; cursor: pointer; text-align: center; color: var(--warning); font-weight: bold;
+        }
+
+        /* Nối cột & Custom Select cho Công thức */
+        .match-container-wrapper { display: flex; flex-direction: column; gap: 10px; }
+        .match-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; background: var(--bg-dark); padding: 10px; border-radius: 8px; }
+        .match-label-a { font-weight: bold; }
+        
+        /* Custom Select Component (Bắt buộc cho MathJax) */
+        .custom-select-wrapper { position: relative; width: 100%; user-select: none; }
+        .custom-select-trigger {
+            background: var(--bg-panel); border: 1px solid var(--bg-card); padding: 12px; border-radius: 8px;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 48px;
+        }
+        .custom-options {
+            position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-panel); border: 1px solid var(--bg-card);
+            border-radius: 8px; margin-top: 5px; z-index: 100; max-height: 250px; overflow-y: auto; display: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .custom-options.open { display: block; }
+        .custom-option { padding: 12px; border-bottom: 1px solid var(--bg-card); cursor: pointer; }
+        .custom-option:last-child { border-bottom: none; }
+        .custom-option:hover { background: var(--bg-card); color: var(--primary); }
+
+        /* ==================== TRÌNH XEM ẢNH CỦNG CỐ ==================== */
+        .summary-image-box { width: 100%; overflow: hidden; border-radius: 8px; background: #000; position: relative; margin: 15px 0; }
+        .summary-image {
+            display: block; width: 100%; max-width: none; max-height: none; height: auto;
+            object-fit: contain; cursor: zoom-in; transition: transform 0.2s;
+        }
+        .summary-image-hint {
+            text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; font-style: italic;
+        }
+        
+        #summary-image-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.95); z-index: 9999; display: none; flex-direction: column;
+        }
+        .summary-viewer-toolbar {
+            height: 60px; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; gap: 15px; padding: 0 15px;
+        }
+        .summary-viewer-toolbar button {
+            width: 44px; height: 44px; border-radius: 50%; background: var(--bg-card); color: white;
+            font-size: 1.2rem; display: flex; justify-content: center; align-items: center;
+        }
+        .summary-viewer-toolbar button:hover { background: var(--primary); }
+        .summary-viewer-toolbar button.btn-close-viewer { background: var(--danger); margin-left: auto; }
+        .summary-zoom-label { font-weight: bold; width: 60px; text-align: center; }
+        .summary-viewer-stage {
+            flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; display: flex;
+            align-items: flex-start; justify-content: flex-start; /* Cho phép cuộn khi to */
+        }
+        #summary-image-full {
+            max-width: none; max-height: none; height: auto; transform-origin: top left;
+            margin: auto; /* Căn giữa khi nhỏ hơn màn hình */
+        }
+
+        /* ==================== TRỢ GIẢNG AI ==================== */
+        #ai-chat-modal {
+            position: fixed; bottom: 20px; right: 300px; width: 350px; height: 500px;
+            background: var(--bg-panel); border-radius: var(--radius); box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            display: none; flex-direction: column; z-index: 1000; border: 1px solid var(--bg-card);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: var(--primary); padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { max-width: 85%; padding: 10px 12px; border-radius: 12px; font-size: 0.95rem; }
+        .msg-user { background: var(--bg-card); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg-ai { background: rgba(6, 182, 212, 0.2); border: 1px solid var(--primary); color: white; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-input { display: flex; padding: 10px; border-top: 1px solid var(--bg-card); background: var(--bg-dark); }
+        .chat-input input { flex: 1; margin-bottom: 0; border-radius: 20px 0 0 20px; border-right: none; }
+        .chat-input button { border-radius: 0 20px 20px 0; padding: 10px 15px; }
+
+        /* ==================== TOAST ==================== */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 12px 20px; border-radius: 8px; color: white; font-weight: bold; box-shadow: var(--shadow); animation: slideIn 0.3s ease; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1024px) {
+            #app-layout { grid-template-columns: 220px 1fr 220px; }
+            #ai-chat-modal { right: 230px; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            #app-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; height: 100vh; }
+            .mobile-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg-panel); border-bottom: 1px solid var(--bg-card); z-index: 51;}
+            .sidebar-left { border-right: none; display: none; }
+            .sidebar-left.mobile-open { display: flex; position: absolute; top: 60px; left: 0; width: 100%; z-index: 50; box-shadow: 0 10px 20px rgba(0,0,0,0.8); max-height: calc(100vh - 60px); }
+            .main-content { padding: 15px; }
+            .content-card { padding: 15px; }
+            .sidebar-right { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 10px; border-left: none; border-top: 1px solid var(--bg-card); }
+            .info-card { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; padding: 10px; }
+            .info-card h3 { margin-bottom: 0; }
+            .score-display { font-size: 1.5rem; margin: 0; }
+            .right-actions { display: flex; gap: 10px; width: 100%; }
+            .right-actions button { flex: 1; padding: 10px; font-size: 0.9rem; }
+            #ai-chat-modal { right: 50%; transform: translateX(50%); width: 95%; bottom: 10px; height: 60vh; }
+            .match-row { grid-template-columns: 1fr; gap: 8px; }
+            .summary-viewer-toolbar { padding: 0 5px; gap: 5px; }
+        }
+        
+        @media (max-width: 480px) {
+            .login-box { padding: 24px; }
+            button { min-height: 44px; }
+            .section-title { font-size: clamp(1.2rem, 5vw, 1.5rem); }
+        }
+        @media (min-width: 769px) { .mobile-nav { display: none; } }
+    </style>
+</head>
+<body>
+
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
+    <div id="login-screen">
+        <div class="login-box">
+            <i class="fa-solid fa-flask-vial"></i>
+            <h1>LỚP HỌC ONLINE-BÀI VẬT LIỆU POLYMER</h1>
+            <p>Bài giảng: Vật liệu Polymer</p>
+            <input type="text" id="login-name" placeholder="Họ và tên học sinh (VD: Nguyễn Văn A)" autocomplete="off">
+            <input type="text" id="login-class" placeholder="Nhập lớp (VD: 12A1)" autocomplete="off">
+            <button class="btn-primary btn-block" onclick="loginStudent()" id="btn-login">BẮT ĐẦU VÀO HỌC</button>
+        </div>
+    </div>
+
+    <!-- BỐ CỤC CHÍNH -->
+    <div id="app-layout" class="hidden">
+        <!-- Mobile Nav -->
+        <div class="mobile-nav">
+            <h3 style="cursor:pointer;" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i> Menu Bài Học</h3>
+            <span id="mobile-student-name" style="font-weight:bold; color:var(--primary);"></span>
+        </div>
+
+        <!-- Cột trái: Menu -->
+        <aside class="sidebar-left" id="sidebar-menu">
+            <div class="menu-header">
+                <h2><i class="fa-solid fa-book-open"></i> NỘI DUNG</h2>
+            </div>
+            <ul class="menu-list">
+                <li class="menu-item active" onclick="navigateSection('intro')" id="nav-intro"><i class="fa-solid fa-info-circle"></i> 1. Giới thiệu bài học</li>
+                <li class="menu-item" onclick="navigateSection('warmup')" id="nav-warmup"><i class="fa-solid fa-rocket"></i> 2. Khởi động (5đ)</li>
+                <li class="menu-item" style="cursor:default; color:var(--text-main); font-weight:bold;"><i class="fa-solid fa-lightbulb"></i> 3. Hình thành kiến thức mới</li>
+                <li class="menu-item menu-sub" onclick="navigateSection('knowledge1')" id="nav-knowledge1">- HĐ 1: Chất dẻo & Composite (10đ)</li>
+                <li class="menu-item menu-sub" onclick="navigateSection('knowledge2')" id="nav-knowledge2">- HĐ 2: Tơ (10đ)</li>
+                <li class="menu-item menu-sub" onclick="navigateSection('knowledge3')" id="nav-knowledge3">- HĐ 3: Cao su (10đ)</li>
+                <li class="menu-item menu-sub" onclick="navigateSection('knowledge4')" id="nav-knowledge4">- HĐ 4: Keo dán & MT (10đ)</li>
+                <li class="menu-item menu-sub" onclick="navigateSection('knowledge5')" id="nav-knowledge5">- HĐ 5: Hoạt động thí nghiệm</li>
+                <li class="menu-item" onclick="navigateSection('practice')" id="nav-practice"><i class="fa-solid fa-dumbbell"></i> 4. Luyện tập (15đ)</li>
+                <li class="menu-item" onclick="navigateSection('summary')" id="nav-summary"><i class="fa-solid fa-map"></i> 5. Củng cố</li>
+                <li class="menu-item" onclick="navigateSection('test')" id="nav-test"><i class="fa-solid fa-file-signature"></i> 6. Kiểm tra cuối bài (40đ)</li>
+            </ul>
+        </aside>
+
+        <!-- Cột giữa: Nội dung -->
+        <main class="main-content" id="main-content">
+            <!-- Nội dung render bằng JS -->
+        </main>
+
+        <!-- Cột phải: Thông tin -->
+        <aside class="sidebar-right">
+            <div class="info-card">
+                <h3>THÔNG TIN HỌC SINH</h3>
+                <div id="info-name" style="font-weight:bold; font-size:1.1rem; color:var(--text-main);">---</div>
+                <div id="info-class" style="color:var(--text-muted);">---</div>
+            </div>
+            <div class="info-card">
+                <h3>ĐIỂM SỐ TỔNG</h3>
+                <div class="score-display"><span id="total-score">0</span>/100</div>
+            </div>
+            <div class="right-actions">
+                <button class="btn-primary btn-block" onclick="submitResultToSheet()" id="btn-submit-sheet"><i class="fa-solid fa-paper-plane"></i> GỬI KẾT QUẢ CHO THẦY</button>
+                <button class="btn-secondary btn-block" onclick="toggleAIChat()"><i class="fa-solid fa-robot"></i> Hỏi Trợ Giảng AI</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal Xem Ảnh Toàn Màn Hình (Củng Cố) -->
+    <div id="summary-image-modal">
+        <div class="summary-viewer-toolbar">
+            <button onclick="summaryZoomOut()" title="Thu nhỏ"><i class="fa-solid fa-minus"></i></button>
+            <div class="summary-zoom-label" id="summary-zoom-label">100%</div>
+            <button onclick="summaryZoomIn()" title="Phóng to"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="summaryZoomReset()" title="Đặt lại 100%"><i class="fa-solid fa-rotate-right"></i></button>
+            <button class="btn-close-viewer" onclick="closeSummaryImage()" title="Đóng"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="summary-viewer-stage" id="summary-viewer-stage">
+            <img id="summary-image-full" src="" alt="Sơ đồ tư duy">
+        </div>
+    </div>
+
+    <!-- Khung Trợ Giảng AI -->
+    <div id="ai-chat-modal">
+        <div class="chat-header">
+            <span><i class="fa-solid fa-robot"></i> Trợ Giảng AI</span>
+            <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="toggleAIChat()"></i>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-msg msg-ai">Chào em, thầy là trợ giảng AI. Em có câu hỏi nào về bài Vật liệu Polymer không?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-input-text" placeholder="Nhập câu hỏi..." onkeypress="if(event.key==='Enter') askAITutor()">
+            <button class="btn-primary" onclick="askAITutor()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Toast Thông Báo -->
+    <div id="toast-container"></div>
+
+    <!-- SCRIPT CHÍNH -->
+    <script>
+        const CONFIG = {
+            SCRIPT_URL: "https://script.google.com/macros/s/AKfycbylWKmSDGC_pI_dEvo8ULeLAOVzydti-LGIrmAbFgcXkCNKW7eJULGbUreo2ZL1mqFd3A/exec", // GIÁO VIÊN: Dán link Web App Apps Script vào đây
+            AI_ENDPOINT: "", // Dán link AI Proxy vào đây nếu có
+            TEACHER_NAME: "Thầy Cường Lê",
+            LESSON_TITLE: "Vật liệu Polymer",
+            SUBJECT: "Hóa học",
+            GRADE: "12"
+        };
+
+        const MEDIA = {
+            summaryImage: "summary.png",
+            warmupAudio: "khoidong.mp3",
+            experimentVideo: "video.mp4"
+        };
+
+        let studentInfo = { name: "", className: "", startTime: null, startId: "" };
+        let scores = { warmup: 0, knowledge1: 0, knowledge2: 0, knowledge3: 0, knowledge4: 0, practice: 0, finalTest: 0, total: 0 };
+        let currentSection = "intro";
+        let isSubmitting = false;
+        
+        let activityStatus = { warmup: false, practice: false, test: false };
+        let k_status = {
+            1: [false, false, false, false, false],
+            2: [false, false, false, false, false],
+            3: [false, false, false, false, false],
+            4: [false, false, false, false, false]
+        };
+        let activeDragChip = null;
+        let globalStats = { correct: 0, wrong: 0, unanswered: 80, total: 80 }; // Tổng 80 câu chấm điểm
+
+        const LESSON_KB = [
+            { title: "Chất dẻo", keywords: ["chất dẻo là gì", "khái niệm chất dẻo"], answer: "Chất dẻo là các vật liệu polymer có tính dẻo. Tính dẻo là tính bị biến dạng khi chịu tác dụng của nhiệt, áp lực bên ngoài và giữ nguyên sự biến dạng đó khi thôi tác dụng." },
+            { title: "PE", keywords: ["pe", "polyethylene"], answer: "PE (polyethylene) được tổng hợp bằng phản ứng trùng hợp ethylene. Ứng dụng: sản xuất túi nylon, màng bọc thực phẩm, chai lọ." },
+            { title: "PP", keywords: ["pp", "polypropylene"], answer: "PP (polypropylene) trùng hợp từ propylene. Dùng làm bao gói, hộp đựng, ống nước." },
+            { title: "PVC", keywords: ["pvc", "poly vinyl chloride"], answer: "PVC trùng hợp từ vinyl chloride. Có tính cách điện tốt, thường dùng làm vỏ bọc dây điện, ống nước, vải giả da." },
+            { title: "PS", keywords: ["ps", "polystyrene"], answer: "PS (polystyrene) trùng hợp từ styrene. Dùng sản xuất hộp xốp, vật liệu cách nhiệt." },
+            { title: "PMMA", keywords: ["pmma", "thuỷ tinh hữu cơ", "thủy tinh", "poly methyl methacrylate"], answer: "Poly(methyl methacrylate) chế tạo từ methyl methacrylate, có đặc tính trong suốt nên gọi là thuỷ tinh hữu cơ. Dùng làm kính ô tô, máy bay, bể cá." },
+            { title: "PPF", keywords: ["ppf", "poly phenol formaldehyde"], answer: "PPF điều chế từ phản ứng trùng ngưng giữa phenol và formaldehyde, có xúc tác acid hoặc base." },
+            { title: "Ô nhiễm rác thải nhựa", keywords: ["ô nhiễm", "môi trường", "rác thải nhựa"], answer: "Nhựa phân hủy rất chậm. Đốt tạo khí độc, chôn lấp làm giảm chất lượng đất. Cần tái chế, hạn chế dùng túi nylon, phân loại rác để bảo vệ môi trường." },
+            { title: "Composite", keywords: ["composite", "vật liệu composite"], answer: "Vật liệu composite gồm 2 hay nhiều vật liệu khác nhau tổ hợp lại, tạo tính chất vượt trội. Gồm vật liệu cốt (sợi, hạt - tăng cơ tính) và vật liệu nền (nhựa, gốm - liên kết cốt)." },
+            { title: "Tơ là gì", keywords: ["tơ là gì", "khái niệm tơ"], answer: "Tơ là những vật liệu polymer có dạng sợi mảnh và độ bền nhất định. Mạch polymer không phân nhánh, xếp song song." },
+            { title: "Phân loại tơ", keywords: ["phân loại tơ", "các loại tơ"], answer: "Gồm Tơ tự nhiên (bông, len, tằm); Tơ tổng hợp (chế tạo từ polymer tổng hợp: nylon-6,6, capron, nitron); Tơ bán tổng hợp (từ polymer tự nhiên chế biến hóa học: visco, cellulose acetate)." },
+            { title: "Tơ tự nhiên", keywords: ["tơ tự nhiên", "bông", "len", "tơ tằm"], answer: "Bông (thành phần chính cellulose); Len (từ lông cừu, protein); Tơ tằm (do sâu tiết ra, protein). Rất thoải mái, thấm mồ hôi." },
+            { title: "Nylon-6,6", keywords: ["nylon-6,6", "nilon 66"], answer: "Tơ nylon-6,6 là tơ polyamide tổng hợp từ hexamethylenediamine và adipic acid (cùng có 6C). Dệt vải, làm dây cáp, đan lưới." },
+            { title: "Capron", keywords: ["capron"], answer: "Tơ capron tổng hợp từ phản ứng trùng hợp mở vòng \(\epsilon\)-caprolactam. Dai, bền, đàn hồi cao." },
+            { title: "Nitron (Olon)", keywords: ["nitron", "olon", "polyacrylonitrile"], answer: "Tơ nitron tổng hợp từ trùng hợp vinyl cyanide (acrylonitrile). Dai, giữ nhiệt tốt, dùng may áo ấm." },
+            { title: "Tơ bán tổng hợp", keywords: ["visco", "cellulose acetate", "tơ bán tổng hợp", "nhân tạo"], answer: "Tơ visco và tơ cellulose acetate được chế biến hóa học từ cellulose. Thấm mồ hôi, thoáng khí." },
+            { title: "Cao su là gì", keywords: ["cao su là gì", "khái niệm cao su", "tính đàn hồi"], answer: "Cao su là vật liệu polymer có tính đàn hồi (biến dạng khi có lực và trở lại ban đầu khi hết lực)." },
+            { title: "Cao su tự nhiên", keywords: ["cao su tự nhiên", "isoprene"], answer: "Lấy từ mủ cây cao su, bản chất là polymer chứa mắt xích isoprene, liên kết đôi dạng cis. Tan trong xăng, benzene, không dẫn điện." },
+            { title: "Lưu hóa cao su", keywords: ["lưu hóa", "cao su lưu hóa"], answer: "Cho cao su tác dụng với lưu huỳnh (S) tạo cầu nối disulfide, hình thành mạng lưới không gian. Cao su lưu hóa bền hơn, đàn hồi tốt hơn." },
+            { title: "Cao su Buna", keywords: ["buna"], answer: "Cao su buna tổng hợp bằng trùng hợp buta-1,3-diene với xúc tác Na." },
+            { title: "Cao su Buna-S, Buna-N", keywords: ["buna-s", "buna-n"], answer: "Buna-S: đồng trùng hợp buta-1,3-diene và styrene. Buna-N: đồng trùng hợp buta-1,3-diene và acrylonitrile." },
+            { title: "Cao su Isoprene & Chloroprene", keywords: ["cao su isoprene", "chloroprene"], answer: "Trùng hợp isoprene thu được cao su isoprene. Trùng hợp chloroprene thu được cao su chloroprene." },
+            { title: "Keo dán", keywords: ["keo dán"], answer: "Kết dính 2 bề mặt vật liệu rắn bằng màng mỏng polymer bám chắc mà không đổi bản chất vật liệu." },
+            { title: "Keo Epoxy", keywords: ["epoxy"], answer: "Gồm 2 phần: hợp chất chứa nhóm epoxy và chất đóng rắn (amine). Khi trộn tạo polymer mạng không gian kết dính mạnh." },
+            { title: "Keo Urea-formaldehyde", keywords: ["urea-formaldehyde", "urea"], answer: "Trùng ngưng urea và formaldehyde. Cần chất đóng rắn để dán gỗ ván ép." },
+            { title: "Hỏi đáp án", keywords: ["đáp án", "kết quả", "giải bài", "chọn câu nào"], answer: "Thầy AI chỉ hướng dẫn cách làm và ôn tập kiến thức cốt lõi. Em hãy đọc kĩ lại lý thuyết phần này để tự chọn đáp án đúng nhé, như vậy em sẽ nhớ lâu hơn!" }
+        ];
+
+        function showToast(msg, type = "success") {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.innerHTML = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 4000);
+        }
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById("sidebar-menu");
+            sidebar.classList.toggle("mobile-open");
+        }
+        
+        function renderMedia(filename, type) {
+            if(!filename) return '';
+            if (type === 'image') return `<img src="${filename}" class="content-img" onerror="this.src='https://placehold.co/600x400/1e293b/f8fafc?text=Chưa+có+ảnh+minh+họa'" alt="Image">`;
+            if (type === 'audio') return `<div style="background:var(--bg-dark); padding:10px; border-radius:8px; margin:15px 0;"><audio controls style="width:100%;"><source src="${filename}" type="audio/mpeg">Trình duyệt không hỗ trợ audio.</audio></div>`;
+            if (type === 'video') return `<video controls style="width:100%; max-width:100%; border-radius:8px; margin:15px 0;" onerror="this.outerHTML='<div style=\\'padding:20px;text-align:center;background:var(--bg-dark);border-radius:8px;\\'>Video chưa sẵn sàng</div>'"><source src="${filename}" type="video/mp4">Trình duyệt không hỗ trợ video.</video>`;
+            return '';
+        }
+
+        function triggerMathJax() {
+            if (window.MathJax) MathJax.typesetPromise();
+        }
+
+        // Quản lý custom dropdown để render MathJax đúng cách thay vì dùng <select>
+        document.addEventListener('click', function(e) {
+            // Đóng tất cả dropdown nếu click ra ngoài
+            if (!e.target.closest('.custom-select-wrapper')) {
+                document.querySelectorAll('.custom-options.open').forEach(el => el.classList.remove('open'));
+            }
+        });
+
+        function createCustomSelectHTML(optionsObj, selectId, placeholder="Chọn đáp án...") {
+            let optionsHTML = '';
+            for (const [key, value] of Object.entries(optionsObj)) {
+                optionsHTML += `<div class="custom-option" data-value="${key}">${value}</div>`;
+            }
+            return `
+                <div class="custom-select-wrapper" id="${selectId}-wrapper" data-selected="">
+                    <div class="custom-select-trigger" onclick="toggleCustomSelect('${selectId}')">
+                        <span class="select-text">${placeholder}</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="custom-options" id="${selectId}-options">
+                        ${optionsHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleCustomSelect(selectId) {
+            const optionsDiv = document.getElementById(`${selectId}-options`);
+            const isOpen = optionsDiv.classList.contains('open');
+            // Đóng tất cả khác
+            document.querySelectorAll('.custom-options.open').forEach(el => el.classList.remove('open'));
+            if (!isOpen) optionsDiv.classList.add('open');
+            
+            // Gán event listener cho option nếu chưa gán
+            if (!optionsDiv.dataset.initialized) {
+                optionsDiv.querySelectorAll('.custom-option').forEach(opt => {
+                    opt.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const val = this.dataset.value;
+                        const text = this.innerHTML;
+                        const wrapper = document.getElementById(`${selectId}-wrapper`);
+                        wrapper.dataset.selected = val;
+                        wrapper.querySelector('.select-text').innerHTML = text;
+                        optionsDiv.classList.remove('open');
+                    });
+                });
+                optionsDiv.dataset.initialized = "true";
+            }
+        }
+
+        function generateUniqueId() { return `${Date.now()}_${Math.random().toString(36).slice(2)}`; }
+
+        async function loginStudent() {
+            const nameInput = document.getElementById("login-name").value.trim();
+            const classInput = document.getElementById("login-class").value.trim();
+            const btn = document.getElementById("btn-login");
+
+            if (!nameInput || !classInput) { showToast("Vui lòng nhập đủ Họ tên và Lớp!", "error"); return; }
+
+            studentInfo.name = nameInput;
+            studentInfo.className = classInput;
+            studentInfo.startId = generateUniqueId();
+            
+            // Gửi action: "start" lên Google Sheet
+            if(CONFIG.SCRIPT_URL) {
+                btn.innerHTML = "Đang vào lớp..."; btn.disabled = true;
+                const startPayload = {
+                    action: "start", studentName: studentInfo.name, className: studentInfo.className,
+                    subject: CONFIG.SUBJECT, lessonTitle: CONFIG.LESSON_TITLE, startId: studentInfo.startId,
+                    userAgent: navigator.userAgent
+                };
+                try {
+                    await fetch(CONFIG.SCRIPT_URL, {
+                        method: "POST", mode: "no-cors",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify(startPayload)
+                    });
+                } catch(e) { console.warn("Lỗi gửi start:", e); }
+            }
+
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("app-layout").classList.remove("hidden");
+            document.getElementById("info-name").innerText = studentInfo.name;
+            document.getElementById("mobile-student-name").innerText = studentInfo.name;
+            document.getElementById("info-class").innerText = "Lớp: " + studentInfo.className;
+            showToast(`Chào mừng ${studentInfo.name} vào bài học!`);
+            navigateSection("intro");
+        }
+
+        async function submitResultToSheet() {
+            if(!studentInfo.name) { showToast("Lỗi: Chưa đăng nhập!", "error"); return; }
+            if(!CONFIG.SCRIPT_URL) { showToast("Giáo viên chưa cấu hình link lưu điểm (SCRIPT_URL).", "warning"); return; }
+            if(isSubmitting) return;
+
+            isSubmitting = true;
+            const btn = document.getElementById("btn-submit-sheet");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+            btn.disabled = true;
+
+            const payload = {
+                action: "submit",
+                studentName: studentInfo.name,
+                className: studentInfo.className,
+                subject: CONFIG.SUBJECT,
+                lessonTitle: CONFIG.LESSON_TITLE,
+                scores: scores,
+                stats: globalStats,
+                userAgent: navigator.userAgent,
+                submitId: generateUniqueId(),
+                time: new Date().toISOString()
+            };
+
+            try {
+                await fetch(CONFIG.SCRIPT_URL, {
+                    method: "POST", mode: "no-cors",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+                showToast("Đã gửi kết quả cho Thầy.", "success");
+            } catch (error) {
+                showToast("Chưa gửi được. Em kiểm tra kết nối mạng nhé.", "error");
+            } finally {
+                isSubmitting = false;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function updateScore(section, value) {
+            scores[section] = value;
+            calculateTotalScore();
+        }
+        function calculateTotalScore() {
+            scores.total = scores.warmup + scores.knowledge1 + scores.knowledge2 + scores.knowledge3 + scores.knowledge4 + scores.practice + scores.finalTest;
+            document.getElementById("total-score").innerText = scores.total;
+        }
+
+        const k1_data = {
+            theory: String.raw`
+                <div class="math-box">
+                <p><strong>1. Khái niệm chất dẻo:</strong> Là vật liệu polymer có tính dẻo (biến dạng khi chịu nhiệt, áp lực và giữ nguyên trạng thái khi thôi tác dụng).</p>
+                <p><strong>2. Một số chất dẻo thông dụng:</strong></p>
+                <ul>
+                    <li><strong>PE:</strong> \(\ce{nCH2=CH2 ->[t^o, xt, p] -(CH2-CH2)_n -}\) (Trùng hợp ethylene). Dùng làm túi nylon, màng bọc.</li>
+                    <li><strong>PP:</strong> Trùng hợp propylene \(\ce{CH2=CH-CH3}\). Dùng làm hộp đựng, ống nước.</li>
+                    <li><strong>PVC:</strong> Trùng hợp vinyl chloride \(\ce{CH2=CH-Cl}\). Dùng làm vỏ dây điện, ống nước.</li>
+                    <li><strong>PS:</strong> Trùng hợp styrene \(\ce{C6H5-CH=CH2}\). Dùng làm hộp xốp.</li>
+                    <li><strong>Poly(methyl methacrylate) (PMMA):</strong> \(\ce{nCH2=C(CH3)COOCH3 ->[t^o, xt, p] -(CH2-C(CH3)(COOCH3))_n -}\). Còn gọi là thuỷ tinh hữu cơ.</li>
+                    <li><strong>PPF:</strong> Điều chế bằng phản ứng trùng ngưng phenol với formaldehyde.</li>
+                </ul>
+                <p><strong>3. Vật liệu Composite:</strong> Tổ hợp từ 2 hay nhiều vật liệu tạo vật liệu mới ưu việt hơn. Gồm <em>vật liệu cốt</em> (sợi, hạt) và <em>vật liệu nền</em> (nhựa polymer, gốm).</p>
+                </div>
+            `,
+            questions: [
+                { q: "Chất dẻo PVC được tổng hợp từ monomer nào sau đây?", o: [String.raw`\(\ce{CH2=CH2}\)`, String.raw`\(\ce{CH2=CH-CH3}\)`, String.raw`\(\ce{CH2=CH-Cl}\)`, String.raw`\(\ce{C6H5-CH=CH2}\)`], a: 2, exp: "PVC (poly(vinyl chloride)) được tổng hợp bằng cách trùng hợp vinyl chloride \(\ce{CH2=CH-Cl}\)." },
+                { q: "Poly(methyl methacrylate) được dùng làm gì?", o: ["Vỏ bọc dây điện", "Thuỷ tinh hữu cơ", "Sản xuất hộp xốp", "Ống dẫn nước"], a: 1, exp: "PMMA có tính trong suốt nên được gọi là thuỷ tinh hữu cơ, dùng làm kính." },
+                { q: "Thành phần nào có vai trò liên kết các thành phần khác trong vật liệu composite?", o: ["Vật liệu cốt", "Vật liệu nền", "Chất tạo màu", "Chất độn"], a: 1, exp: "Vật liệu nền có vai trò liên kết cốt lại tạo tính thống nhất." },
+                { q: "Polymer nào sau đây được điều chế bằng phản ứng trùng ngưng?", o: ["PE", "PP", "PVC", "Poly(phenol formaldehyde)"], a: 3, exp: "PPF (Poly(phenol formaldehyde)) điều chế bằng trùng ngưng phenol và formaldehyde." },
+                { q: "Đặc điểm nổi bật nhất của chất dẻo là gì?", o: ["Tính đàn hồi", "Tính dẻo", "Kéo thành sợi", "Dẫn điện tốt"], a: 1, exp: "Chất dẻo là vật liệu có tính dẻo." }
+            ]
+        };
+
+        const k2_data = {
+            theory: String.raw`
+                <div class="math-box">
+                <p><strong>1. Khái niệm tơ:</strong> Vật liệu polymer dạng sợi mảnh, mạch không nhánh, xếp song song.</p>
+                <p><strong>2. Phân loại:</strong></p>
+                <ul>
+                    <li><strong>Tơ tự nhiên:</strong> Bông (cellulose), Len (lông động vật, protein), Tơ tằm (protein).</li>
+                    <li><strong>Tơ tổng hợp:</strong> Chế tạo từ polymer tổng hợp.
+                        <br>- <em>Nylon-6,6:</em> Thuộc loại polyamide, dai, mềm, dệt vải may mặc.
+                        <br>- <em>Capron:</em> Trùng hợp mở vòng \(\epsilon\)-caprolactam.
+                        <br>- <em>Nitron (Olon):</em> Trùng hợp \(\ce{CH2=CH-CN}\) (acrylonitrile), giữ nhiệt tốt.
+                    </li>
+                    <li><strong>Tơ bán tổng hợp (nhân tạo):</strong> Chế biến từ polymer tự nhiên. VD: Tơ visco, tơ cellulose acetate.</li>
+                </ul>
+                </div>
+            `,
+            questions: [
+                { q: "Tơ nào sau đây thuộc loại tơ bán tổng hợp?", o: ["Tơ tằm", "Tơ nylon-6,6", "Tơ visco", "Tơ capron"], a: 2, exp: "Tơ visco và cellulose acetate là tơ bán tổng hợp (chế biến từ cellulose)." },
+                { q: "Thành phần chính của sợi bông là gì?", o: ["Protein", "Cellulose", "Polyamide", "Polyacrylonitrile"], a: 1, exp: "Sợi bông lấy từ thiên nhiên có thành phần chính là cellulose." },
+                { q: "Tơ nitron được tổng hợp từ monomer nào?", o: [String.raw`\(\ce{CH2=CH-Cl}\)`, String.raw`\(\ce{CH2=CH-CN}\)`, String.raw`\(\epsilon\)-caprolactam`, "Styrene"], a: 1, exp: "Tơ nitron tổng hợp từ acrylonitrile \(\ce{CH2=CH-CN}\)." },
+                { q: "Đặc điểm chung của các phân tử polymer dùng làm tơ là gì?", o: ["Mạch không phân nhánh", "Mạch phân nhánh", "Mạch không gian", "Dễ tan trong nước"], a: 0, exp: "Các phân tử polymer làm tơ thường có mạch không phân nhánh, xếp song song." },
+                { q: "Tơ nylon-6,6 thuộc loại tơ nào?", o: ["Tơ tự nhiên", "Tơ polyamide", "Tơ nhân tạo", "Tơ cellulose"], a: 1, exp: "Nylon-6,6 là tơ tổng hợp thuộc họ polyamide (chứa liên kết -CO-NH-)." }
+            ]
+        };
+
+        const k3_data = {
+            theory: String.raw`
+                <div class="math-box">
+                <p><strong>1. Khái niệm Cao su:</strong> Vật liệu polymer có tính đàn hồi.</p>
+                <p><strong>2. Cao su tự nhiên:</strong> Lấy từ mủ cây cao su. Polymer chứa mắt xích isoprene, liên kết đôi dạng <em>cis</em>: \(\ce{-(CH2-C(CH3)=CH-CH2)_n -}\). Tan trong xăng, benzene, có thể cộng \(\ce{H2, HCl}\)...</p>
+                <p><em>Lưu hóa cao su:</em> Phản ứng với lưu huỳnh tạo cầu nối disulfide (mạng không gian) -> bền, đàn hồi hơn.</p>
+                <p><strong>3. Cao su tổng hợp:</strong></p>
+                <ul>
+                    <li><strong>Buna:</strong> \(\ce{nCH2=CH-CH=CH2 ->[Na, t^o, p] -(CH2-CH=CH-CH2)_n -}\)</li>
+                    <li><strong>Buna-S:</strong> Đồng trùng hợp buta-1,3-diene và styrene.</li>
+                    <li><strong>Buna-N:</strong> Đồng trùng hợp buta-1,3-diene và acrylonitrile \(\ce{CH2=CH-CN}\).</li>
+                    <li><strong>Isoprene & Chloroprene:</strong> Trùng hợp từ isoprene và chloroprene tương ứng.</li>
+                </ul>
+                </div>
+            `,
+            questions: [
+                { q: "Cao su tự nhiên là polymer của monomer nào?", o: ["Buta-1,3-diene", "Styrene", "Isoprene", "Chloroprene"], a: 2, exp: "Cao su tự nhiên có thành phần chính là polyisoprene." },
+                { q: "Bản chất của quá trình lưu hóa cao su là gì?", o: ["Làm đứt gãy mạch polymer", "Tạo cầu nối disulfide tạo mạng không gian", "Thêm chất độn vào cao su", "Hoà tan cao su trong dung môi"], a: 1, exp: "Lưu hóa tạo cầu nối -S-S- nối các mạch polymer thành mạng không gian." },
+                { q: "Cao su Buna-S được tổng hợp từ buta-1,3-diene và chất nào?", o: ["Acrylonitrile", "Isoprene", "Chloroprene", "Styrene"], a: 3, exp: "Chữ S trong Buna-S đại diện cho Styrene." },
+                { q: "Tính chất đặc trưng nhất của cao su là gì?", o: ["Tính dẻo", "Kéo thành sợi", "Tính đàn hồi", "Tính dẫn nhiệt"], a: 2, exp: "Cao su là vật liệu có tính đàn hồi." },
+                { q: "Công thức nào là của monomer tạo cao su chloroprene?", o: [String.raw`\(\ce{CH2=C(CH3)-CH=CH2}\)`, String.raw`\(\ce{CH2=CH-CH=CH2}\)`, String.raw`\(\ce{CH2=C(Cl)-CH=CH2}\)`, String.raw`\(\ce{CH2=CH-CN}\)`], a: 2, exp: "Chloroprene là \(\ce{CH2=C(Cl)-CH=CH2}\)." }
+            ]
+        };
+
+        const k4_data = {
+            theory: String.raw`
+                <div class="math-box">
+                <p><strong>1. Keo dán:</strong> Vật liệu có khả năng kết dính bề mặt vật liệu rắn mà không làm biến đổi bản chất của chúng (tạo màng mỏng bám chắc).</p>
+                <p><strong>2. Một số loại keo dán:</strong></p>
+                <ul>
+                    <li><em>Nhựa vá săm:</em> Dung dịch cao su hòa tan trong dung môi hữu cơ (xăng, toluene).</li>
+                    <li><em>Keo dán epoxy:</em> Gồm hợp chất chứa nhóm epoxy và chất đóng rắn (amine) -> tạo mạng không gian.</li>
+                    <li><em>Keo poly(urea-formaldehyde):</em> Điều chế bằng trùng ngưng urea và formaldehyde, dán gỗ ép.</li>
+                </ul>
+                <p><strong>3. Vấn đề môi trường:</strong> Nhựa phân hủy rất chậm. Đốt sinh khí độc; chôn lấp làm hỏng đất. Cần tái chế, phân loại rác, dùng túi sinh học.</p>
+                </div>
+            `,
+            questions: [
+                { q: "Keo dán nhựa vá săm bản chất là gì?", o: ["Keo epoxy", "Keo urea-formaldehyde", "Cao su hòa tan trong dung môi hữu cơ", "Polymer nóng chảy"], a: 2, exp: "Nhựa vá săm là cao su hòa tan trong dung môi như xăng, toluene." },
+                { q: "Khi dùng keo dán epoxy cần trộn thành phần chính với chất gì?", o: ["Nước", "Chất đóng rắn (amine)", "Acid", "Muối ăn"], a: 1, exp: "Keo epoxy cần chất đóng rắn (thường là amine) để tạo mạng không gian." },
+                { q: "Keo poly(urea-formaldehyde) được điều chế bằng phản ứng nào?", o: ["Trùng hợp", "Đồng trùng hợp", "Trùng ngưng", "Thủy phân"], a: 2, exp: "Được điều chế bằng phản ứng trùng ngưng giữa urea và formaldehyde." },
+                { q: "Tác hại của việc đốt rác thải nhựa là gì?", o: ["Làm tăng độ phì nhiêu của đất", "Tạo ra khí độc hại, tăng hiệu ứng nhà kính", "Không có tác hại gì", "Tạo ra phân bón sinh học"], a: 1, exp: "Đốt nhựa sinh ra khí độc và làm tăng hiệu ứng nhà kính." },
+                { q: "Biện pháp nào sau đây giúp giảm thiểu rác thải nhựa?", o: ["Sử dụng túi nylon một lần", "Đốt rác tự do", "Phân loại rác tại nguồn và tái chế", "Chôn lấp tất cả rác nhựa"], a: 2, exp: "Tái chế và phân loại rác là biện pháp thiết thực để giảm ô nhiễm." }
+            ]
+        };
+
+        const experiment_data = {
+            title: "HĐ5: HOẠT ĐỘNG THÍ NGHIỆM",
+            video: MEDIA.experimentVideo,
+            objective: "Quan sát hiện tượng và tính chất của vật liệu polymer (sự lưu hóa cao su / đốt cháy chất dẻo).",
+            guide: ["Xem kỹ video.", "Lưu ý sự biến đổi trạng thái, màu sắc (nếu có)."],
+            observationTasks: [
+                "Quan sát hiện tượng trước và sau khi xử lý vật liệu.",
+                "Giải thích sự khác biệt về tính đàn hồi của cao su sau khi lưu hóa dựa trên cấu trúc mạng không gian."
+            ]
+        };
+
+        const warmupData = [
+            { type: "mcq", q: "Thành phần chính của chất dẻo là gì?", o: ["Protein", "Cellulose", "Polymer", "Kim loại"], a: 2, exp: "Chất dẻo có thành phần chính là các polymer tổng hợp." },
+            { type: "tf", q: "Tơ tằm là tơ tổng hợp do con người chế tạo ra.", a: false, exp: "Tơ tằm là tơ tự nhiên, do sâu tằm tiết ra." },
+            { type: "fill", q: "Cao su là vật liệu polymer có tính ...", a: ["đàn hồi", "dan hoi"], exp: "Tính đàn hồi là đặc trưng quan trọng nhất của cao su." },
+            { type: "match", q: "Ghép tên polymer với monomer tương ứng:", pairs: [{a: "PE", b: String.raw`\(\ce{CH2=CH2}\)`}, {a: "PVC", b: String.raw`\(\ce{CH2=CH-Cl}\)`}] },
+            { type: "match", q: "Ghép tơ với loại tơ tương ứng:", pairs: [{a: "Tơ visco", b: "Tơ bán tổng hợp"}, {a: "Tơ nitron", b: "Tơ tổng hợp"}] }
+        ];
+
+        const practiceData = {
+            mcq: [
+                { q: "Monomer tạo ra cao su tự nhiên là:", o: ["Styrene", "Buta-1,3-diene", "Isoprene", "Vinyl chloride"], a: 2, exp: "Cao su tự nhiên là polyisoprene." },
+                { q: "Vật liệu composite gồm các thành phần nào?", o: ["Chất dẻo và cao su", "Vật liệu cốt và vật liệu nền", "Tơ và keo dán", "Polymer và dung môi"], a: 1, exp: "Composite gồm vật liệu cốt và vật liệu nền." },
+                { q: "Tơ nylon-6,6 được điều chế bằng phản ứng:", o: ["Trùng hợp", "Trùng ngưng", "Cộng gộp", "Trao đổi"], a: 1, exp: "Nylon-6,6 là tơ polyamide tổng hợp bằng phản ứng trùng ngưng." },
+                {
+    q: "Khi đốt cao su tự nhiên sẽ:",
+    o: [
+        "Không cháy",
+        String.raw`Cháy sinh ra \(\ce{CO2}\) và \(\ce{H2O}\)`,
+        String.raw`Cháy sinh ra khí \(\ce{Cl2}\)`,
+        "Biến thành thuỷ tinh"
+    ],
+    a: 1,
+    exp: String.raw`Cao su tự nhiên là hydrocarbon (chứa C, H) nên khi cháy tạo \(\ce{CO2}\) và \(\ce{H2O}\).`
+},
+                { q: "Keo dán poly(urea-formaldehyde) được điều chế từ:", o: ["Phenol và formaldehyde", "Urea và formaldehyde", "Epoxy và amine", "Cao su và xăng"], a: 1, exp: "Như tên gọi, nó tổng hợp từ urea và formaldehyde." }
+            ],
+            tf: [
+                { q: "Cao su lưu hóa có cấu trúc mạch không phân nhánh.", a: false, exp: "Cao su lưu hóa có cấu trúc mạng không gian (do cầu nối -S-S-)." },
+                { q: "Tơ nitron (olon) giữ nhiệt tốt nên dùng dệt áo ấm.", a: true, exp: "Đúng theo tính chất của tơ nitron." },
+                { q: "Sợi bông có thành phần chính là protein.", a: false, exp: "Sợi bông có thành phần chính là cellulose." },
+                { q: "PMMA trong suốt, được dùng làm kính ô tô.", a: true, exp: "PMMA còn gọi là thuỷ tinh hữu cơ." }
+            ],
+            drag: [
+                { blank: "Tơ capron thuộc loại tơ [1].", options: ["tổng hợp", "tự nhiên", "bán tổng hợp"], ans: "tổng hợp" },
+                { blank: "Cao su Buna-S được tổng hợp từ buta-1,3-diene và [1].", options: ["isoprene", "styrene", "acrylonitrile"], ans: "styrene" },
+                { blank: "Tơ visco là loại tơ [1] do chế biến từ cellulose.", options: ["tự nhiên", "bán tổng hợp", "tổng hợp"], ans: "bán tổng hợp" }
+            ],
+            fill: [
+                { q: "Chất dẻo là vật liệu polymer có tính ...", a: ["dẻo", "deo"], exp: "Chất dẻo có tính dẻo." },
+                { q: "Tơ nylon-6,6 thuộc họ tơ ... vì chứa liên kết -CO-NH-.", a: ["polyamide", "poliamit", "polyamid"], exp: "Liên kết amide -CO-NH- tạo nên tơ polyamide." },
+                { q: "Quá trình cho cao su tác dụng với lưu huỳnh gọi là quá trình ...", a: ["lưu hóa", "luu hoa"], exp: "Đó là quá trình lưu hóa cao su." }
+            ]
+        };
+
+        const finalTestData = {
+            mcq: [
+                { q: "Polymer nào dùng để sản xuất chất dẻo PE?", o: [String.raw`\(\ce{CH2=CH2}\)`, String.raw`\(\ce{CH2=CH-CH3}\)`, "Styrene", "Phenol"], a: 0, exp: "PE trùng hợp từ ethylene." },
+                { q: "Trong composite, sợi thuỷ tinh đóng vai trò gì?", o: ["Vật liệu nền", "Vật liệu cốt", "Chất tạo màu", "Chất xúc tác"], a: 1, exp: "Sợi thuỷ tinh là dạng cốt sợi." },
+                { q: "Tơ nào sau đây có nguồn gốc từ thiên nhiên?", o: ["Tơ tằm", "Tơ visco", "Nylon-6,6", "Nitron"], a: 0, exp: "Tơ tằm do sâu tiết ra." },
+                { q: "Monomer của tơ nitron là gì?", o: [String.raw`\(\ce{CH2=CH-Cl}\)`, String.raw`\(\ce{CH2=CH-CN}\)`, "Caprolactam", "Styrene"], a: 1, exp: "Tơ nitron trùng hợp từ acrylonitrile \(\ce{CH2=CH-CN}\)." },
+                { q: "Cao su buna-N được tổng hợp từ buta-1,3-diene và:", o: ["Styrene", "Acrylonitrile", "Isoprene", "Lưu huỳnh"], a: 1, exp: "Chữ N là Acrylonitrile." },
+                { q: "Đặc điểm cấu tạo mạch của cao su tự nhiên là chứa liên kết đôi dạng:", o: ["Trans", "Cis", "Không có liên kết đôi", "Liên kết ba"], a: 1, exp: "Cao su tự nhiên là cis-polyisoprene." },
+                { q: "Để dán kim loại, gỗ, người ta thường dùng keo dán nào?", o: ["Nhựa vá săm", "Keo dán epoxy", "Keo hồ", "Keo 502 (cyanoacrylate)"], a: 1, exp: "Keo epoxy dán dính rất chắc trên nhiều bề mặt." },
+                { q: "Sự ô nhiễm môi trường do nhựa còn gọi là ô nhiễm gì?", o: ["Ô nhiễm trắng", "Ô nhiễm nhiệt", "Ô nhiễm phóng xạ", "Ô nhiễm tiếng ồn"], a: 0, exp: "Rác thải nhựa thường được gọi là ô nhiễm trắng." },
+                { q: "Tơ visco được điều chế từ:", o: ["Protein", "Cellulose", "Dầu mỏ", "Khí thiên nhiên"], a: 1, exp: "Tơ visco chế biến từ cellulose." },
+                { q: "Poly(phenol formaldehyde) được tổng hợp bằng phản ứng:", o: ["Trùng hợp", "Trùng ngưng", "Cộng gộp", "Thủy phân"], a: 1, exp: "Tổng hợp bằng phản ứng trùng ngưng." }
+            ],
+            tf: [
+                { q: "PVC có tính cách điện tốt nên được dùng làm vỏ bọc dây điện.", a: true, exp: "Đúng, PVC cách điện tốt." },
+                { q: "Tơ nilon-6,6 là tơ tự nhiên.", a: false, exp: "Nó là tơ tổng hợp." },
+                { q: "Cao su isoprene được tổng hợp bằng phản ứng trùng ngưng.", a: false, exp: "Tổng hợp bằng phản ứng trùng hợp." },
+                { q: "Lưu hóa cao su tạo ra polymer có mạng không gian.", a: true, exp: "Tạo cầu nối disulfide." },
+                { q: "Thành phần của keo dán epoxy gồm hợp chất epoxy và chất đóng rắn.", a: true, exp: "Chất đóng rắn thường là amine." },
+                { q: "Sợi bông có khả năng thấm hút mồ hôi tốt.", a: true, exp: "Do có nhóm -OH trong cellulose." },
+                { q: "Vật liệu nền trong composite chỉ có thể là nhựa polymer.", a: false, exp: "Có thể là kim loại, gốm..." },
+                { q: "Tơ cellulose acetate là tơ tổng hợp.", a: false, exp: "Là tơ bán tổng hợp (nhân tạo)." },
+                { q: "Đốt rác thải nhựa là cách xử lý thân thiện với môi trường.", a: false, exp: "Đốt sinh khí độc và CO2." },
+                { q: "Cao su tự nhiên có thể tham gia phản ứng cộng \(\ce{H2}\).", a: true, exp: "Vì trong phân tử có chứa liên kết đôi." }
+            ],
+            fill: [
+                { q: "Vật liệu polymer có tính biến dạng khi chịu tác dụng của nhiệt, áp lực gọi là ...", a: ["chất dẻo", "chat deo"] },
+                { q: "Sợi bông có thành phần chủ yếu là ...", a: ["cellulose", "xenlulozơ", "xenlulozo"] },
+                { q: "Cao su là vật liệu polymer có tính ...", a: ["đàn hồi", "dan hoi"] },
+                { q: "Quá trình chế tạo cao su mạng không gian bằng lưu huỳnh gọi là ...", a: ["lưu hóa", "luu hoa"] },
+                { q: "Poly(methyl methacrylate) được dùng làm ... hữu cơ.", a: ["thuỷ tinh", "thủy tinh", "thuy tinh"] },
+                { q: "Tơ visco thuộc loại tơ ... tổng hợp.", a: ["bán", "ban"] },
+                { q: "Cao su ... được lấy từ mủ cây cao su.", a: ["tự nhiên", "tu nhien"] },
+                { q: "Keo dán poly(urea-formaldehyde) được điều chế từ urea và ...", a: ["formaldehyde", "fomandehit"] },
+                { q: "Thành phần giúp kết dính các vật liệu cốt trong composite gọi là vật liệu ...", a: ["nền", "nen"] },
+                { q: "Chữ S trong cao su Buna-S là viết tắt của ...", a: ["styrene", "stiren"] }
+            ],
+            match: [
+                { a: "PE", b: "Màng bọc thực phẩm, túi nylon" },
+                { a: "PVC", b: "Ống nước, vỏ dây điện" },
+                { a: "PMMA", b: "Thuỷ tinh hữu cơ" },
+                { a: "Sợi bông", b: "Cellulose" },
+                { a: "Len lông cừu", b: "Protein" },
+                { a: "Nylon-6,6", b: "Tơ tổng hợp polyamide" },
+                { a: "Visco", b: "Tơ bán tổng hợp" },
+                { a: "Buna-N", b: "Trùng hợp buta-1,3-diene và acrylonitrile" },
+                { a: "Buna-S", b: "Trùng hợp buta-1,3-diene và styrene" },
+                { a: "Cao su tự nhiên", b: "Polyisoprene, liên kết đôi cis" }
+            ]
+        };
+
+        function navigateSection(sectionId) {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${sectionId}`).classList.add('active');
+            
+            const main = document.getElementById("main-content");
+            main.innerHTML = "";
+            currentSection = sectionId;
+
+            if(window.innerWidth <= 768) {
+                document.getElementById("sidebar-menu").classList.remove("mobile-open");
+            }
+
+            switch(sectionId) {
+                case 'intro': renderIntro(); break;
+                case 'warmup': renderWarmup(); break;
+                case 'knowledge1': renderK(1, "Chất dẻo & Composite", k1_data, 'knowledge2'); break;
+                case 'knowledge2': renderK(2, "Tơ", k2_data, 'knowledge3'); break;
+                case 'knowledge3': renderK(3, "Cao su", k3_data, 'knowledge4'); break;
+                case 'knowledge4': renderK(4, "Keo dán & Ô nhiễm môi trường", k4_data, 'knowledge5'); break;
+                case 'knowledge5': renderExperiment(); break;
+                case 'practice': renderPractice(); break;
+                case 'summary': renderSummary(); break;
+                case 'test': renderTest(); break;
+            }
+            main.scrollTop = 0;
+            triggerMathJax();
+        }
+
+        function renderIntro() {
+            const main = document.getElementById("main-content");
+            main.innerHTML = `
+                <div class="content-card">
+                    <h2 class="section-title">GIỚI THIỆU BÀI HỌC</h2>
+                    <h3 style="color:var(--primary); font-size:1.5rem; margin-bottom:10px;">${CONFIG.LESSON_TITLE}</h3>
+                    <p><strong>Môn học:</strong> ${CONFIG.SUBJECT} ${CONFIG.GRADE}</p>
+                    <hr style="border-color:var(--bg-card); margin:15px 0;">
+                    <h4 style="color:var(--warning); margin-bottom:10px;"><i class="fa-solid fa-bullseye"></i> Mục tiêu bài học:</h4>
+                    <ul>
+                        <li>Nêu được khái niệm, thành phần, cấu tạo và phân loại các vật liệu polymer (Chất dẻo, Tơ, Cao su, Keo dán).</li>
+                        <li>Viết được phản ứng tổng hợp các polymer tiêu biểu.</li>
+                        <li>Nhận thức được vấn đề ô nhiễm môi trường do rác thải nhựa và các biện pháp bảo vệ.</li>
+                    </ul>
+                    ${renderMedia(MEDIA.warmupAudio, "audio")}
+                    <button class="btn-primary" style="margin-top:20px;" onclick="navigateSection('warmup')">Bắt đầu Khởi động <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            `;
+        }
+
+        function renderWarmup() {
+            let html = `<div class="content-card"><h2 class="section-title">KHỞI ĐỘNG (5 ĐIỂM)</h2>`;
+            html += `<p style="margin-bottom:20px; color:var(--text-muted);">Hãy trả lời các câu hỏi sau để kiểm tra kiến thức nền nhé!</p>`;
+            
+            warmupData.forEach((q, index) => {
+                html += `<div class="question-box"><h4>Câu ${index+1}: ${q.q}</h4>`;
+                
+                if (q.type === 'mcq') {
+                    html += `<div class="options-grid" id="wm-opts-${index}">`;
+                    q.o.forEach((opt, oIdx) => {
+                        html += `<button class="option-btn" onclick="selectWmMcq(${index}, ${oIdx})">${opt}</button>`;
+                    });
+                    html += `</div>`;
+                    html += `<input type="hidden" id="wm-ans-${index}" value="">`;
+                }
+                else if (q.type === 'tf') {
+                    html += `<div class="options-grid" id="wm-opts-${index}">
+                        <button class="option-btn" onclick="selectWmTf(${index}, true)">Đúng</button>
+                        <button class="option-btn" onclick="selectWmTf(${index}, false)">Sai</button>
+                    </div>`;
+                    html += `<input type="hidden" id="wm-ans-${index}" value="">`;
+                }
+                else if (q.type === 'fill') {
+                    html += `<input type="text" id="wm-ans-${index}" placeholder="Nhập đáp án..." style="width:100%; margin-top:10px;">`;
+                }
+                else if (q.type === 'match') {
+                    html += `<div class="match-container-wrapper" style="margin-top:10px;">`;
+                    let bOpts = {};
+                    let bArr = [...q.pairs];
+                    // Trộn cột B
+                    for(let i=bArr.length-1; i>0; i--){
+                        const j = Math.floor(Math.random()*(i+1));
+                        [bArr[i], bArr[j]] = [bArr[j], bArr[i]];
+                    }
+                    bArr.forEach((item) => {
+    bOpts[item.a] = item.b;
+});
+
+                    q.pairs.forEach((pair, pIdx) => {
+                        html += `<div class="match-row">
+                            <div class="match-label-a">${pair.a}</div>
+                            ${createCustomSelectHTML(bOpts, `wm-match-${index}-${pIdx}`, "Chọn...")}
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                html += `<div class="feedback" id="fb-wm-${index}"></div></div>`;
+            });
+
+            html += `<button class="btn-primary btn-block" onclick="submitWarmup()" id="btn-submit-wm">KIỂM TRA (KHỞI ĐỘNG)</button>`;
+            html += `<button class="btn-secondary btn-block hidden" onclick="navigateSection('knowledge1')" id="btn-next-wm" style="margin-top:10px;">TIẾP TỤC HỌC TẬP <i class="fa-solid fa-arrow-right"></i></button>`;
+            html += `</div>`;
+            document.getElementById("main-content").innerHTML = html;
+        }
+
+        function selectWmMcq(qIdx, oIdx) {
+            const opts = document.getElementById(`wm-opts-${qIdx}`).children;
+            for(let opt of opts) opt.style.borderColor = "var(--bg-card)";
+            opts[oIdx].style.borderColor = "var(--warning)";
+            document.getElementById(`wm-ans-${qIdx}`).value = oIdx;
+        }
+        function selectWmTf(qIdx, val) {
+            const opts = document.getElementById(`wm-opts-${qIdx}`).children;
+            opts[0].style.borderColor = "var(--bg-card)"; opts[1].style.borderColor = "var(--bg-card)";
+            opts[val ? 0 : 1].style.borderColor = "var(--warning)";
+            document.getElementById(`wm-ans-${qIdx}`).value = val;
+        }
+
+        function submitWarmup() {
+            if(activityStatus.warmup) return;
+            let score = 0;
+            
+            warmupData.forEach((q, index) => {
+                let isCorrect = false;
+                const fb = document.getElementById(`fb-wm-${index}`);
+                
+                if (q.type === 'mcq') {
+                    const ans = document.getElementById(`wm-ans-${index}`).value;
+                    if(ans !== "" && parseInt(ans) === q.a) isCorrect = true;
+                } else if (q.type === 'tf') {
+                    const ans = document.getElementById(`wm-ans-${index}`).value;
+                    if(ans !== "" && (ans === "true") === q.a) isCorrect = true;
+                } else if (q.type === 'fill') {
+                    const ans = document.getElementById(`wm-ans-${index}`).value.trim().toLowerCase();
+                    if(q.a.includes(ans)) isCorrect = true;
+                } else if (q.type === 'match') {
+                    let matchCorrect = true;
+                    q.pairs.forEach((pair, pIdx) => {
+                        const selectWrapper = document.getElementById(`wm-match-${index}-${pIdx}-wrapper`);
+                        const selVal = selectWrapper.dataset.selected;
+
+if (selVal === "") {
+    matchCorrect = false;
+    return;
+}
+
+if (selVal !== pair.a) {
+    matchCorrect = false;
+}
+                    });
+                    isCorrect = matchCorrect;
+                }
+
+                if(isCorrect) { score += 1; fb.className = "feedback show success"; fb.innerHTML = `<i class="fa-solid fa-check"></i> Chính xác! ${q.exp||""}`; }
+                else { fb.className = "feedback show error"; fb.innerHTML = `<i class="fa-solid fa-xmark"></i> Sai. ${q.exp||""}`; }
+                
+                // Vô hiệu hóa controls
+                const box = fb.parentElement;
+                box.querySelectorAll('button.option-btn, input').forEach(el => el.disabled = true);
+                box.querySelectorAll('.custom-select-trigger').forEach(el => el.onclick = null);
+            });
+
+            updateScore('warmup', score);
+            activityStatus.warmup = true;
+            document.getElementById("btn-submit-wm").classList.add("hidden");
+            document.getElementById("btn-next-wm").classList.remove("hidden");
+            showToast(`Khởi động: Đạt ${score}/5 điểm`);
+            triggerMathJax();
+        }
+
+        function renderK(id, title, data, nextSec) {
+            let html = `<div class="content-card"><h2 class="section-title">HĐ ${id}: ${title} (10 ĐIỂM)</h2>`;
+            html += `<div style="margin-bottom:20px; font-size:1.05rem;">${data.theory}</div>`;
+            
+            html += `<h4 style="color:var(--warning); margin-bottom:15px;"><i class="fa-solid fa-clipboard-question"></i> Câu hỏi kiểm tra (Mỗi câu đúng 2 điểm):</h4>`;
+            data.questions.forEach((q, index) => {
+                const isAnswered = k_status[id][index];
+                html += `<div class="question-box"><h5>Câu ${index+1}: ${q.q}</h5><div class="options-grid">`;
+                q.o.forEach((opt, oIdx) => {
+                    let btnClass = "option-btn";
+                    if (isAnswered) btnClass += " disabled";
+                    html += `<button class="${btnClass}" id="k${id}-q${index}-o${oIdx}" ${isAnswered?'disabled':''} onclick="checkKMulti(${id}, ${index}, ${oIdx}, this, ${q.a}, '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                });
+                html += `</div><div class="feedback ${isAnswered?'show success':''}" id="fb-k${id}-q${index}">${isAnswered?'<i class="fa-solid fa-check"></i> Đã trả lời đúng':''}</div></div>`;
+            });
+            
+            html += `<button class="btn-secondary btn-block" onclick="navigateSection('${nextSec}')">Tiếp tục hoạt động tiếp theo <i class="fa-solid fa-arrow-right"></i></button>`;
+            html += `</div>`;
+            document.getElementById("main-content").innerHTML = html;
+        }
+
+        function checkKMulti(activityId, qIdx, ans, btn, correct, exp) {
+            if(k_status[activityId][qIdx]) return;
+            const fb = document.getElementById(`fb-k${activityId}-q${qIdx}`);
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if(ans === correct) {
+                btn.classList.add("correct");
+                fb.className = "feedback show success";
+                fb.innerHTML = `<i class="fa-solid fa-check"></i> Chính xác! ${exp}`;
+                k_status[activityId][qIdx] = true;
+                updateScore(`knowledge${activityId}`, scores[`knowledge${activityId}`] + 2);
+            } else {
+                btn.classList.add("wrong");
+                buttons[correct].classList.add("correct");
+                fb.className = "feedback show error";
+                fb.innerHTML = `<i class="fa-solid fa-xmark"></i> Sai. Đáp án đúng đã được hiển thị. ${exp}`;
+                k_status[activityId][qIdx] = true; // Dù sai cũng ko cho làm lại để cộng điểm
+            }
+            triggerMathJax();
+        }
+
+        function renderExperiment() {
+            let html = `<div class="content-card">
+                <h2 class="section-title">${experiment_data.title}</h2>
+                <div style="margin-bottom:20px; font-size:1.05rem;">
+                    <p><strong><i class="fa-solid fa-bullseye"></i> Mục tiêu:</strong> ${experiment_data.objective}</p>
+                </div>
+                ${renderMedia(experiment_data.video, "video")}
+                <div style="background:var(--bg-dark); padding:15px; border-radius:8px; border:1px solid var(--warning); margin-bottom:20px;">
+                    <h4 style="color:var(--warning); margin-bottom:10px;"><i class="fa-solid fa-eye"></i> Nhiệm vụ quan sát:</h4>
+                    <ul style="margin-left:20px; color:var(--text-main);">
+                        ${experiment_data.observationTasks.map(t => `<li style="margin-bottom:5px;">${t}</li>`).join('')}
+                    </ul>
+                </div>
+                <button class="btn-primary btn-block" onclick="navigateSection('practice')">Tiếp tục sang Luyện tập <i class="fa-solid fa-arrow-right"></i></button>
+            </div>`;
+            document.getElementById("main-content").innerHTML = html;
+        }
+
+        function renderPractice() {
+            let html = `<div class="content-card"><h2 class="section-title">LUYỆN TẬP (15 ĐIỂM)</h2>`;
+            let qNum = 1;
+
+            // 1. Trắc nghiệm 4 lựa chọn
+            html += `<h4 style="color:var(--primary); margin-top:20px;">I. Chọn đáp án đúng (Mỗi câu 1đ)</h4>`;
+            practiceData.mcq.forEach((q, i) => {
+                html += `<div class="question-box"><h5>Câu ${qNum++}: ${q.q}</h5><div class="options-grid" id="pr-mcq-opts-${i}">`;
+                q.o.forEach((opt, oIdx) => { html += `<button class="option-btn" onclick="selectPrMcq(${i}, ${oIdx})">${opt}</button>`; });
+                html += `</div><input type="hidden" id="pr-mcq-ans-${i}" value=""><div class="feedback" id="fb-pr-mcq-${i}"></div></div>`;
+            });
+
+            // 2. Đúng Sai
+            html += `<h4 style="color:var(--primary); margin-top:20px;">II. Chọn Đúng hoặc Sai (Mỗi câu 1đ)</h4>`;
+            practiceData.tf.forEach((q, i) => {
+                html += `<div class="question-box"><h5>Câu ${qNum++}: ${q.q}</h5>
+                <div class="options-grid" id="pr-tf-opts-${i}">
+                    <button class="option-btn" onclick="selectPrTf(${i}, true)">Đúng</button>
+                    <button class="option-btn" onclick="selectPrTf(${i}, false)">Sai</button>
+                </div><input type="hidden" id="pr-tf-ans-${i}" value=""><div class="feedback" id="fb-pr-tf-${i}"></div></div>`;
+            });
+
+            // 3. Kéo thả (Chạm/Chọn)
+            html += `<h4 style="color:var(--primary); margin-top:20px;">III. Chọn từ điền vào chỗ trống (Mỗi câu 1đ)</h4>`;
+            html += `<p style="font-size:0.9rem; color:var(--text-muted);"><em>Hướng dẫn: Bấm chọn từ bên dưới, sau đó bấm vào ô trống để điền.</em></p>`;
+            let allWords = [];
+            practiceData.drag.forEach(q => allWords.push(...q.options));
+            allWords = [...new Set(allWords)].sort(() => Math.random() - 0.5); // Unique & shuffle
+            
+            html += `<div class="word-bank">`;
+            allWords.forEach((w, i) => { html += `<div class="word-chip" id="chip-${i}" onclick="selectWordChip('chip-${i}')">${w}</div>`; });
+            html += `</div>`;
+
+            practiceData.drag.forEach((q, i) => {
+                let text = q.blank.replace('[1]', `<span class="drop-blank" id="drop-${i}" onclick="dropToBlank(this)">...</span>`);
+                html += `<div class="question-box"><h5>Câu ${qNum++}:</h5><p>${text}</p><div class="feedback" id="fb-pr-drag-${i}"></div></div>`;
+            });
+
+            // 4. Điền khuyết
+            html += `<h4 style="color:var(--primary); margin-top:20px;">IV. Điền khuyết (Mỗi câu 1đ)</h4>`;
+            practiceData.fill.forEach((q, i) => {
+                html += `<div class="question-box"><h5>Câu ${qNum++}: ${q.q}</h5>
+                <input type="text" id="pr-fill-ans-${i}" placeholder="Nhập đáp án...">
+                <div class="feedback" id="fb-pr-fill-${i}"></div></div>`;
+            });
+
+            html += `<button class="btn-primary btn-block" style="margin-top:20px;" onclick="submitPractice()" id="btn-submit-pr">NỘP BÀI LUYỆN TẬP</button>`;
+            html += `<button class="btn-secondary btn-block hidden" onclick="navigateSection('summary')" id="btn-next-pr" style="margin-top:10px;">TIẾP TỤC ĐẾN CỦNG CỐ <i class="fa-solid fa-arrow-right"></i></button>`;
+            html += `</div>`;
+            document.getElementById("main-content").innerHTML = html;
+        }
+
+        function selectPrMcq(qIdx, oIdx) {
+            const opts = document.getElementById(`pr-mcq-opts-${qIdx}`).children;
+            for(let opt of opts) opt.style.borderColor = "var(--bg-card)";
+            opts[oIdx].style.borderColor = "var(--warning)";
+            document.getElementById(`pr-mcq-ans-${qIdx}`).value = oIdx;
+        }
+        function selectPrTf(qIdx, val) {
+            const opts = document.getElementById(`pr-tf-opts-${qIdx}`).children;
+            opts[0].style.borderColor = "var(--bg-card)"; opts[1].style.borderColor = "var(--bg-card)";
+            opts[val ? 0 : 1].style.borderColor = "var(--warning)";
+            document.getElementById(`pr-tf-ans-${qIdx}`).value = val;
+        }
+
+        function selectWordChip(id) {
+            document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected-chip'));
+            const chip = document.getElementById(id);
+            chip.classList.add('selected-chip');
+            activeDragChip = chip.innerText;
+        }
+        function dropToBlank(el) {
+            if(activeDragChip) {
+                el.innerText = activeDragChip;
+                el.style.color = "var(--success)";
+                el.style.borderBottomColor = "var(--success)";
+                document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected-chip'));
+                activeDragChip = null;
+            }
+        }
+
+        function submitPractice() {
+            if(activityStatus.practice) return;
+            let score = 0;
+
+            // MCQ
+            practiceData.mcq.forEach((q, i) => {
+                const ans = document.getElementById(`pr-mcq-ans-${i}`).value;
+                const fb = document.getElementById(`fb-pr-mcq-${i}`);
+                if(ans !== "" && parseInt(ans) === q.a) { score++; fb.className="feedback show success"; fb.innerHTML=`<i class="fa-solid fa-check"></i> ${q.exp}`; }
+                else { fb.className="feedback show error"; fb.innerHTML=`<i class="fa-solid fa-xmark"></i> Sai. ${q.exp}`; }
+                document.getElementById(`pr-mcq-opts-${i}`).querySelectorAll('button').forEach(b => b.disabled = true);
+            });
+            // TF
+            practiceData.tf.forEach((q, i) => {
+                const ans = document.getElementById(`pr-tf-ans-${i}`).value;
+                const fb = document.getElementById(`fb-pr-tf-${i}`);
+                if(ans !== "" && (ans === "true") === q.a) { score++; fb.className="feedback show success"; fb.innerHTML=`<i class="fa-solid fa-check"></i> ${q.exp}`; }
+                else { fb.className="feedback show error"; fb.innerHTML=`<i class="fa-solid fa-xmark"></i> Sai. ${q.exp}`; }
+                document.getElementById(`pr-tf-opts-${i}`).querySelectorAll('button').forEach(b => b.disabled = true);
+            });
+            // Drag
+            practiceData.drag.forEach((q, i) => {
+                const ans = document.getElementById(`drop-${i}`).innerText;
+                const fb = document.getElementById(`fb-pr-drag-${i}`);
+                if(ans === q.ans) { score++; fb.className="feedback show success"; fb.innerHTML=`<i class="fa-solid fa-check"></i> Chính xác`; }
+                else { fb.className="feedback show error"; fb.innerHTML=`<i class="fa-solid fa-xmark"></i> Sai. Đáp án: ${q.ans}`; }
+                document.getElementById(`drop-${i}`).onclick = null;
+            });
+            // Fill
+            practiceData.fill.forEach((q, i) => {
+                const ans = document.getElementById(`pr-fill-ans-${i}`).value.trim().toLowerCase();
+                const fb = document.getElementById(`fb-pr-fill-${i}`);
+                if(q.a.includes(ans)) { score++; fb.className="feedback show success"; fb.innerHTML=`<i class="fa-solid fa-check"></i> ${q.exp||''}`; }
+                else { fb.className="feedback show error"; fb.innerHTML=`<i class="fa-solid fa-xmark"></i> Sai. ${q.exp||''}`; }
+                document.getElementById(`pr-fill-ans-${i}`).disabled = true;
+            });
+
+            updateScore('practice', score);
+            activityStatus.practice = true;
+            document.getElementById("btn-submit-pr").classList.add("hidden");
+            document.getElementById("btn-next-pr").classList.remove("hidden");
+            showToast(`Luyện tập: Đạt ${score}/15 điểm`);
+            triggerMathJax();
+        }
+
+        function renderSummary() {
+            const main = document.getElementById("main-content");
+            main.innerHTML = `
+                <div class="content-card">
+                    <h2 class="section-title">TỔNG KẾT BÀI HỌC</h2>
+                    <div class="summary-image-box">
+                        <img src="${MEDIA.summaryImage}" class="summary-image" id="summary-img-trigger" 
+                             onerror="this.src='https://placehold.co/800x400/1e293b/f8fafc?text=Sơ+Đồ+Tư+Duy'; this.style.cursor='default';" 
+                             onclick="openSummaryImage()" alt="Sơ đồ tư duy">
+                        <div class="summary-image-hint">Bấm vào ảnh để phóng to / thu nhỏ</div>
+                    </div>
+                    <h4 style="color:var(--warning); margin-bottom:10px;"><i class="fa-solid fa-star"></i> KIẾN THỨC TRỌNG TÂM:</h4>
+                    <ul>
+                        <li><strong>Chất dẻo:</strong> Vật liệu tính dẻo (PE, PP, PVC, PS, PMMA, PPF).</li>
+                        <li><strong>Composite:</strong> Cốt (tăng cơ tính) + Nền (liên kết).</li>
+                        <li><strong>Tơ:</strong> Tự nhiên (bông, len, tằm), Tổng hợp (nylon-6,6, capron, nitron), Bán tổng hợp (visco, cellulose acetate).</li>
+                        <li><strong>Cao su:</strong> Tính đàn hồi. TN (mủ cao su, isoprene). TH (Buna, Buna-S, Buna-N...). Có thể lưu hóa để tăng bền.</li>
+                        <li><strong>Keo dán:</strong> Nhựa vá săm, keo epoxy, keo poly(urea-formaldehyde). Cần chung tay giảm thiểu rác thải nhựa.</li>
+                    </ul>
+                    <button class="btn-primary btn-block" style="margin-top:20px;" onclick="navigateSection('test')">BÀI KIỂM TRA CUỐI BÀI <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            `;
+        }
+
+        let currentZoom = 100;
+        function openSummaryImage() {
+            const modal = document.getElementById("summary-image-modal");
+            const fullImg = document.getElementById("summary-image-full");
+            const triggerImg = document.getElementById("summary-img-trigger");
+            
+            // Bỏ qua nếu lỗi load ảnh placehold
+            if(triggerImg.src.includes('placehold.co')) return; 
+
+            fullImg.src = triggerImg.src;
+            currentZoom = 100;
+            applySummaryZoom();
+            modal.style.display = "flex";
+            document.body.style.overflow = "hidden"; // Khóa cuộn trang sau
+        }
+        function closeSummaryImage() {
+            document.getElementById("summary-image-modal").style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+        function summaryZoomIn() {
+            if(currentZoom < 300) { currentZoom += 25; applySummaryZoom(); }
+        }
+        function summaryZoomOut() {
+            if(currentZoom > 50) { currentZoom -= 25; applySummaryZoom(); }
+        }
+        function summaryZoomReset() {
+            currentZoom = 100; applySummaryZoom();
+        }
+        function applySummaryZoom() {
+            document.getElementById("summary-zoom-label").innerText = currentZoom + "%";
+            const fullImg = document.getElementById("summary-image-full");
+            fullImg.style.width = currentZoom + "%";
+        }
+
+        // Bắt sự kiện phím cho trình xem ảnh
+        document.addEventListener('keydown', function(e) {
+            if(document.getElementById("summary-image-modal").style.display === "flex") {
+                if(e.key === 'Escape') closeSummaryImage();
+                if(e.key === '+' || e.key === '=') summaryZoomIn();
+                if(e.key === '-') summaryZoomOut();
+                if(e.key === '0') summaryZoomReset();
+            }
+        });
+        // Bắt sự kiện lăn chuột
+        document.getElementById("summary-viewer-stage").addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) summaryZoomIn();
+                else summaryZoomOut();
+            }
+        }, {passive: false});
+
+        function renderTest() {
+            let html = `<div class="content-card"><h2 class="section-title">KIỂM TRA CUỐI BÀI (40 ĐIỂM)</h2>`;
+            let qNum = 1;
+
+            html += `<h4 style="color:var(--primary);">Phần 1: Trắc nghiệm 4 lựa chọn (10 điểm)</h4>`;
+            html += generateTestMCQ(1);
+            
+            html += `<h4 style="color:var(--primary); margin-top:20px;">Phần 2: Đúng / Sai (10 điểm)</h4>`;
+            html += generateTestTF(11);
+            
+            html += `<h4 style="color:var(--primary); margin-top:20px;">Phần 3: Điền khuyết (10 điểm)</h4>`;
+            html += generateTestFill(21);
+            
+            html += `<h4 style="color:var(--primary); margin-top:20px;">Phần 4: Nối cột kiến thức (10 điểm)</h4>`;
+            html += generateTestMatch(31);
+
+            html += `<button class="btn-primary btn-block" style="margin-top:30px;" onclick="submitFinalTest()" id="btn-submit-test">NỘP BÀI KIỂM TRA</button>`;
+            html += `</div>`;
+            document.getElementById("main-content").innerHTML = html;
+        }
+
+        function generateTestMCQ(startIdx) {
+            let html = '';
+            finalTestData.mcq.forEach((q, i) => {
+                html += `<div class="question-box"><h5>Câu ${startIdx + i}: ${q.q}</h5><div class="options-grid" id="test-mcq-opts-${i}">`;
+                q.o.forEach((opt, oIdx) => { html += `<button class="option-btn" onclick="selectTestMcq(${i}, ${oIdx})">${opt}</button>`; });
+                html += `</div><input type="hidden" id="test-mcq-ans-${i}" value=""><div class="feedback" id="fb-test-mcq-${i}"></div></div>`;
+            });
+            return html;
+        }
+        function generateTestTF(startIdx) {
+            let html = '';
+            finalTestData.tf.forEach((q, i) => {
+                html += `<div class="question-box"><h5>Câu ${startIdx + i}: ${q.q}</h5>
+                <div class="options-grid" id="test-tf-opts-${i}">
+                    <button class="option-btn" onclick="selectTestTf(${i}, true)">Đúng</button>
+                    <button class="option-btn" onclick="selectTestTf(${i}, false)">Sai</button>
+                </div><input type="hidden" id="test-tf-ans-${i}" value=""><div class="feedback" id="fb-test-tf-${i}"></div></div>`;
+            });
+            return html;
+        }
+        function generateTestFill(startIdx) {
+            let html = '';
+            finalTestData.fill.forEach((q, i) => {
+                html += `<div class="question-box"><h5>Câu ${startIdx + i}: ${q.q}</h5>
+                <input type="text" id="test-fill-ans-${i}" placeholder="Nhập đáp án..." style="width:100%; margin-top:10px;">
+                <div class="feedback" id="fb-test-fill-${i}"></div></div>`;
+            });
+            return html;
+        }
+        function generateTestMatch(startIdx) {
+            let html = `<div class="question-box"><h5>Câu ${startIdx} đến ${startIdx + 9}: Ghép ý cột trái với cột phải sao cho phù hợp</h5>`;
+            html += `<div class="match-container-wrapper">`;
+            
+            let bOpts = {};
+            let bArr = [...finalTestData.match];
+            for(let i=bArr.length-1; i>0; i--){
+                const j = Math.floor(Math.random()*(i+1));
+                [bArr[i], bArr[j]] = [bArr[j], bArr[i]];
+            }
+            bArr.forEach((item, i) => { bOpts[i] = item.b; }); // Khởi tạo object cho dropdown
+
+            finalTestData.match.forEach((pair, i) => {
+                html += `<div class="match-row">
+                    <div class="match-label-a">${pair.a}</div>
+                    ${createCustomSelectHTML(bOpts, `test-match-${i}`, "Chọn kết quả đúng...")}
+                </div>`;
+            });
+            html += `</div><div class="feedback" id="fb-test-match"></div></div>`;
+            return html;
+        }
+
+        function selectTestMcq(qIdx, oIdx) {
+            const opts = document.getElementById(`test-mcq-opts-${qIdx}`).children;
+            for(let opt of opts) opt.style.borderColor = "var(--bg-card)";
+            opts[oIdx].style.borderColor = "var(--warning)";
+            document.getElementById(`test-mcq-ans-${qIdx}`).value = oIdx;
+        }
+        function selectTestTf(qIdx, val) {
+            const opts = document.getElementById(`test-tf-opts-${qIdx}`).children;
+            opts[0].style.borderColor = "var(--bg-card)"; opts[1].style.borderColor = "var(--bg-card)";
+            opts[val ? 0 : 1].style.borderColor = "var(--warning)";
+            document.getElementById(`test-tf-ans-${qIdx}`).value = val;
+        }
+
+        function submitFinalTest() {
+            if(activityStatus.test) return;
+            let score = 0;
+            let totalCorrect = 0; let totalWrong = 0; let totalUnanswered = 0;
+
+            // Chấm MCQ
+            finalTestData.mcq.forEach((q, i) => {
+                const ans = document.getElementById(`test-mcq-ans-${i}`).value;
+                const fb = document.getElementById(`fb-test-mcq-${i}`);
+                if (ans === "") totalUnanswered++;
+                else if(parseInt(ans) === q.a) { score++; totalCorrect++; fb.className="feedback show success"; fb.innerHTML=`<i class="fa-solid fa-check"></i> ${q.exp}`; }
+                else { totalWrong++; fb.className="feedback show error"; fb.innerHTML=`<i class="fa-solid fa-xmark"></i> Sai. ${q.exp}`; }
+                document.getElementById(`test-mcq-opts-${i}`).querySelectorAll('button').forEach(b => b.disabled = true);
+            });
+            // Chấm TF
+            finalTestData.tf.forEach((q, i) => {
+                const ans = document.getElementById(`test-tf-ans-${i}`).value;
+                const fb = document.getElementById(`fb-test-tf-${i}`);
+                if (ans === "") totalUnanswered++;
+                else if((ans === "true") === q.a) { score++; totalCorrect++; fb.className="feedback show success"; fb.innerHTML=`<i class="fa-solid fa-check"></i> ${q.exp}`; }
+                else { totalWrong++; fb.className="feedback show error"; fb.innerHTML=`<i class="fa-solid fa-xmark"></i> Sai. ${q.exp}`; }
+                document.getElementById(`test-tf-opts-${i}`).querySelectorAll('button').forEach(b => b.disabled = true);
+            });
+            // Chấm Fill
+            finalTestData.fill.forEach((q, i) => {
+                const ans = document.getElementById(`test-fill-ans-${i}`).value.trim().toLowerCase();
+                const fb = document.getElementById(`fb-test-fill-${i}`);
+                if (ans === "") totalUnanswered++;
+                else if(q.a.includes(ans)) { score++; totalCorrect++; fb.className="feedback show success"; fb.innerHTML=`<i class="fa-solid fa-check"></i> Chính xác`; }
+                else { totalWrong++; fb.className="feedback show error"; fb.innerHTML=`<i class="fa-solid fa-xmark"></i> Sai. (Đáp án: ${q.a[0]})`; }
+                document.getElementById(`test-fill-ans-${i}`).disabled = true;
+            });
+            // Chấm Match
+            let matchScore = 0;
+            finalTestData.match.forEach((pair, i) => {
+                const selectWrapper = document.getElementById(`test-match-${i}-wrapper`);
+                const selVal = selectWrapper.dataset.selected;
+                if (selVal === "") { totalUnanswered++; }
+                else {
+                    const selText = selectWrapper.querySelector(`.custom-option[data-value="${selVal}"]`).innerHTML;
+                    if(selText === pair.b) { matchScore++; totalCorrect++; }
+                    else { totalWrong++; }
+                }
+                selectWrapper.onclick = null;
+            });
+            score += matchScore;
+            const fbMatch = document.getElementById("fb-test-match");
+            fbMatch.className = "feedback show " + (matchScore===10 ? "success":"error");
+            fbMatch.innerHTML = `Phần nối cột: Đúng ${matchScore}/10 cặp.`;
+
+            // Cập nhật điểm & Stats
+            updateScore('finalTest', score);
+            globalStats.correct = (scores.warmup + scores.knowledge1/2 + scores.knowledge2/2 + scores.knowledge3/2 + scores.knowledge4/2 + scores.practice + score);
+            globalStats.wrong = totalWrong; // Xấp xỉ phần kiểm tra cho đơn giản logic, nhưng cần tính tổng
+            // Để tính chính xác stats, ta nên tính dựa trên totalScore:
+            globalStats.correct = scores.warmup + (scores.knowledge1+scores.knowledge2+scores.knowledge3+scores.knowledge4)/2 + scores.practice + scores.finalTest;
+            globalStats.unanswered = 0; // Giả định tính theo score cho đơn giản
+            globalStats.wrong = 80 - globalStats.correct - globalStats.unanswered;
+
+            activityStatus.test = true;
+            document.getElementById("btn-submit-test").classList.add("hidden");
+            showToast(`Kiểm tra: Đạt ${score}/40 điểm. Em hãy bấm nút GỬI KẾT QUẢ CHO THẦY ở cột bên phải nhé!`);
+            triggerMathJax();
+            
+            // Tự động nhắc nhở nhấp nút gửi điểm bằng hiệu ứng
+            const btnSubmit = document.getElementById("btn-submit-sheet");
+            btnSubmit.style.boxShadow = "0 0 15px var(--warning)";
+            setTimeout(()=> { btnSubmit.style.boxShadow = ""; }, 3000);
+        }
+
+        function toggleAIChat() {
+            const modal = document.getElementById("ai-chat-modal");
+            if(modal.style.display === "flex") {
+                modal.style.display = "none";
+            } else {
+                modal.style.display = "flex";
+                document.getElementById("chat-input-text").focus();
+            }
+        }
+
+        function normalizeVN(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        }
+
+        function localTutorAnswer(question) {
+            const qLower = question.toLowerCase();
+            const qNorm = normalizeVN(question);
+            let bestMatch = null;
+            let maxScore = 0;
+
+            LESSON_KB.forEach(item => {
+                let score = 0;
+                item.keywords.forEach(kw => {
+                    if (qNorm.includes(normalizeVN(kw))) score += 2;
+                    if (qLower.includes(kw)) score += 3;
+                });
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestMatch = item.answer;
+                }
+            });
+
+            if (maxScore > 0) return bestMatch;
+            return "Xin lỗi em, câu hỏi này có vẻ chưa nằm trong phạm vi bài học 'Vật liệu Polymer'. Em thử dùng các từ khóa như 'chất dẻo', 'cao su', 'tơ', 'keo dán' hoặc công thức cụ thể nhé.";
+        }
+
+        async function askAITutor() {
+            const inputEl = document.getElementById("chat-input-text");
+            const q = inputEl.value.trim();
+            if(!q) return;
+
+            appendChatMessage(q, 'user');
+            inputEl.value = "";
+
+            if(CONFIG.AI_ENDPOINT) {
+                // Gọi API
+                const id = "ai-loading-" + Date.now();
+                appendChatMessage('<i class="fa-solid fa-ellipsis fa-fade"></i>', 'ai', id);
+                try {
+                    const res = await fetch(CONFIG.AI_ENDPOINT, {
+                        method: "POST", headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({ question: q, context: "Bài học Vật liệu Polymer - Hoá học 12." })
+                    });
+                    const data = await res.json();
+                    document.getElementById(id).innerHTML = data.answer || "Lỗi phản hồi.";
+                } catch(e) {
+                    document.getElementById(id).innerHTML = "Lỗi kết nối AI. " + localTutorAnswer(q);
+                }
+            } else {
+                // Nội bộ
+                const ans = localTutorAnswer(q);
+                appendChatMessage(ans, 'ai');
+            }
+            triggerMathJax();
+        }
+
+        function appendChatMessage(text, sender, id="") {
+            const box = document.getElementById("chat-body");
+            const div = document.createElement("div");
+            div.className = `chat-msg msg-${sender}`;
+            if(id) div.id = id;
+            div.innerHTML = text;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        /* Khởi tạo */
+        window.onload = () => {
+            // Hiển thị form đăng nhập trước, app ẩn
+        };
+    </script>
+</body>
+</html>
